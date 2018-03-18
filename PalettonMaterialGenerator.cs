@@ -1,11 +1,10 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 using System.IO;
 
 public class PalettonMaterialGenerator : EditorWindow
 {
-    string shader = "Legacy Shaders/Diffuse";
     string paletteName = "New palette";
     string path = "Materials";
     string palettonText = "Paste paletton.com text eport here";
@@ -23,14 +22,6 @@ public class PalettonMaterialGenerator : EditorWindow
 
     void OnGUI()
     {
-        EditorGUILayout.LabelField("Shader: " + this.shader);
-
-        if (GUILayout.Button("Change shader"))
-        {
-            DisplayShaderContext(GUILayoutUtility.GetRect(GUIContent.none, EditorStyles.popup));
-        }
-
-
         this.paletteName = EditorGUILayout.TextField("Palette name", this.paletteName);
         this.path = EditorGUILayout.TextField("Path", this.path);
 
@@ -103,53 +94,17 @@ public class PalettonMaterialGenerator : EditorWindow
     private void SaveMaterial(string materialName, string path, Color color)
     {
         string materialFilename = materialName + ".mat";
-        Shader currentShader = Shader.Find(this.shader);
 
         Material m = (Material)AssetDatabase.LoadAssetAtPath(path + "/" + materialFilename, typeof(Material));
         if (m != null)
         {
             m.color = color;
-            m.shader = currentShader;
         }
         else
         {
-            Material material = new Material(currentShader);
+            Material material = new Material(Shader.Find("Standard"));
             material.color = color;
             AssetDatabase.CreateAsset(material, path + "/" + materialFilename);
-        }
-    }
-
-    /*
-     * Shaderselector by Acegikmo @ http://answers.unity3d.com/answers/543407/view.html
-     * @todo: Creating materials from shader source string will be removed in the future. Use Shader assets instead. 
-     */
-    private void DisplayShaderContext(Rect r)
-    {
-        if (this.mc == null)
-        {
-            this.mc = new MenuCommand(this, 0);
-        }
-
-        // Create dummy material to make it not highlight any shaders inside:
-        string tmpStr = "Shader \"Hidden/tmp_shdr\"{SubShader{Pass{}}}";
-        Material temp = new Material(tmpStr);
-
-        // Rebuild shader menu:
-        UnityEditorInternal.InternalEditorUtility.SetupShaderMenu(temp);
-
-        // Destroy temporary shader and material:
-        DestroyImmediate(temp.shader, true);
-        DestroyImmediate(temp, true);
-
-        // Display shader popup:
-        EditorUtility.DisplayPopupMenu(r, "CONTEXT/ShaderPopup", this.mc);
-    }
-
-    private void OnSelectedShaderPopup(string command, Shader shader)
-    {
-        if (shader != null)
-        {
-            this.shader = shader.name;
         }
     }
 }
