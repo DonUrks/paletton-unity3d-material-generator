@@ -56,9 +56,9 @@ public class PalettonMaterialGenerator : EditorWindow
 
                             Color newColor;
                             newColor.a = 1.0f;
-                            newColor.r = float.Parse(rgb0Elements[0]);
-                            newColor.g = float.Parse(rgb0Elements[1]);
-                            newColor.b = float.Parse(rgb0Elements[2]);
+                            newColor.r = float.Parse(rgb0Elements[0], System.Globalization.CultureInfo.InvariantCulture);
+                            newColor.g = float.Parse(rgb0Elements[1], System.Globalization.CultureInfo.InvariantCulture);
+                            newColor.b = float.Parse(rgb0Elements[2], System.Globalization.CultureInfo.InvariantCulture);
 
                             colors.Add(newColor);
 
@@ -103,7 +103,7 @@ public class PalettonMaterialGenerator : EditorWindow
         else
         {
             Material material = new Material(Shader.Find("Standard"));
-            material.color = color;
+            material.SetColor("_Color", color);
             AssetDatabase.CreateAsset(material, path + "/" + materialFilename);
         }
     }
